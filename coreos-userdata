@@ -35,8 +35,8 @@ coreos:
         [Service]
         ExecStartPre=/var/lib/apt-cacher-service/apt-cacher-service build
         ExecStart=/var/lib/apt-cacher-service/apt-cacher-service run
-        ExecStartPost=/usr/bin/etcdctl set /inaetics/apt-cacher-service $public_ipv4:3142
-        ExecStopPost=/usr/bin/etcdctl rm /inaetics/apt-cacher-service
+        ExecStartPost=/usr/bin/etcdctl set /inaetics/apt-cacher-service/%m $public_ipv4:3142
+        ExecStopPost=/usr/bin/etcdctl rm /inaetics/apt-cacher-service/%m
         TimeoutSec=600
         Restart=always
 
