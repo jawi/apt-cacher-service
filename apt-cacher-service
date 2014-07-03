@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Control apt-cacher-service run|stop|start with docker
+#
+# This is just a very simple helper. Use docker directly
+# for full options (see http://www.docker.com/)
+
+CIDFILE=".containerid"
+COMMAND=$1
+
+PWD=`pwd`
+cd $(dirname $0)
+cd $PWD
+
+
+start_up () {
+    docker start apt-cacher-service >/dev/null 2>/dev/null
+    if [ $? -gt 0 ]; then
+      docker run --name apt-cacher-service -d -p 3142:3142 inaetics/apt-cacher-service /usr/sbin/apt-cacher > /dev/null 2>/dev/null
+    fi
+}
+
+clean_up () {
+    docker stop apt-cacher-service > /dev/null 2>/dev/null
+    docker rm apt-cacher-service >/dev/null 2>/dev/null
+    exit
+}
+
+case "$COMMAND" in
+  build)
+    echo "Building image inaetics/apt-cacher-service"
+    docker build -t inaetics/apt-cacher-service .
+    ;;
+  run)
+    echo "Running Apt Cacher Service" 
+    start_up
+    trap clean_up SIGHUP SIGINT SIGTERM
+    while true; do sleep 10; done
+    ;;
+  start)
+    echo "Starting Apt Cacher Service" 
+    start_up
+    ;;
+  stop)
+    echo "Stopping Apt Cacher Service" 
+    clean_up
+    ;;
+  *)
+    echo "Usage: $0 {build|run|start|stop}"
+    exit 1
+    ;;
+esac
+
+cd $PWD
+exit 0
