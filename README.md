@@ -1,7 +1,7 @@
 apt-cacher-service
 ==================
 
-Run apt-cacher in CoreOS/Docker
+Run [Apt Cacher Server](https://help.ubuntu.com/community/Apt-Cacher-Server) as a CoreOS/Docker service.
 
 Run on local machine
 -------------------
@@ -18,6 +18,6 @@ Run in Vagrant
 * Clone this repository
 * Configure discovery in coreos-userdata (optional)
 * Run `vagrant up`
-* Check http://172.17.8.200:3142
+* Check `http://172.17.8.200:3142`
 
 
