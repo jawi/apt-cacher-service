@@ -8,6 +8,7 @@ Run on local machine
 
 * Install Docker
 * Clone this repository
+* Run `./apt-cacher-service build`
 * Run `./apt-cacher-service run`
 * Check http://localhost:3142
 
