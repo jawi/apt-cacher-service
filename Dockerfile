@@ -1,6 +1,6 @@
 # Dockerfile for inaetics/apt-cacher-service
 
-FROM ubuntu:latest
+FROM ubuntu:14.04
 MAINTAINER Bram de Kruijff <bdekruijff@gmail.com> (@bdekruijff)
 
 # Generic upgrade
