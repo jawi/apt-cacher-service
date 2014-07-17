@@ -5,7 +5,7 @@ require 'fileutils'
 Vagrant.require_version ">= 1.6.0"
 
 $instance_name="apt-cacher-service"
-$instance_ip="172.17.8.200"
+$instance_ip="172.17.8.110"
 
 $coreos_channel="coreos-alpha"
 $coreos_version=">= 361.0.0"
@@ -31,13 +31,12 @@ Vagrant.configure("2") do |config|
       virtualbox.cpus = $virtualbox_cpus
     end
 
-
     # Provision service with nfs
-    #config.vm.synced_folder ".", "/var/lib/apt-cacher-service", id: "apt-cacher-service", :nfs => true, :mount_options => ['nolock,vers=3,udp']
+    # config.vm.synced_folder ".", "/var/lib/apt-cacher-service", id: "apt-cacher-service", :nfs => true, :mount_options => ['nolock,vers=3,udp']
 
     # Provision service with shell
-    config.vm.provision :file, :source => ".", :destination => "/tmp/apt-cacher-service"
-    config.vm.provision :shell, :inline => "rm -rf /var/lib/apt-cacher-service; mv /tmp/apt-cacher-service /var/lib/apt-cacher-service", :privileged => true
+    # config.vm.provision :file, :source => ".", :destination => "/tmp/apt-cacher-service"
+    # config.vm.provision :shell, :inline => "rm -rf /var/lib/apt-cacher-service; mv /tmp/apt-cacher-service /var/lib/apt-cacher-service", :privileged => true
 
     #Provision userdata with shell
     config.vm.provision :file, :source => "coreos-userdata", :destination => "/tmp/vagrantfile-user-data"

@@ -2,7 +2,7 @@
 
 coreos:
   etcd:
-      #discovery: https://discovery.etcd.io/XYZ
+      discovery: http://172.17.8.100:4001/v2/keys/testcluster
       addr: $public_ipv4:4001
       peer-addr: $public_ipv4:7001
   units:
@@ -33,12 +33,27 @@ coreos:
         Requires=docker.service
 
         [Service]
+        ExecStartPre=/bin/bash -c 'if [ ! -d "/var/lib/apt-cacher-service" ]; then git clone https://github.com/INAETICS/apt-cacher-service.git /var/lib/apt-cacher-service; else cd /var/lib/apt-cacher-service; git pull; cd -; fi'
         ExecStartPre=/var/lib/apt-cacher-service/apt-cacher-service build
         ExecStart=/var/lib/apt-cacher-service/apt-cacher-service run
-        ExecStartPost=/usr/bin/etcdctl set /inaetics/apt-cacher-service/%m $public_ipv4:3142
-        ExecStopPost=/usr/bin/etcdctl rm /inaetics/apt-cacher-service/%m
         TimeoutSec=600
         Restart=always
+        RestartSec=10
+
+        [Install]
+        WantedBy=multi-user.target
+    - name: apt-cacher-announce.service
+      command: start
+      runtime: no
+      enable: true
+      content: |
+        [Unit]
+        Description=Apt Cacher Announce
+        BindsTo=apt-cacher-service.service
+
+        [Service]
+        ExecStart=/bin/sh -c "while true; do etcdctl set /inaetics/apt-cacher-service/%m $public_ipv4:8080 --ttl 60; sleep 45; done"
+        ExecStopPost=/usr/bin/etcdctl rm /inaetics/apt-cacher-service/%m
 
         [Install]
         WantedBy=multi-user.target
