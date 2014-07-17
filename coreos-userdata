@@ -52,7 +52,7 @@ coreos:
         BindsTo=apt-cacher-service.service
 
         [Service]
-        ExecStart=/bin/sh -c "while true; do etcdctl set /inaetics/apt-cacher-service/%m $public_ipv4:8080 --ttl 60; sleep 45; done"
+        ExecStart=/bin/sh -c "while true; do etcdctl set /inaetics/apt-cacher-service/%m $public_ipv4:3142 --ttl 60; sleep 45; done"
         ExecStopPost=/usr/bin/etcdctl rm /inaetics/apt-cacher-service/%m
 
         [Install]
