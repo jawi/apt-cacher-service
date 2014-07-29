@@ -1,49 +1,47 @@
-#!/bin/bash
+#!/bin/sh
 
 # Control apt-cacher-service run|stop|start with docker
 #
 # This is just a very simple helper. Use docker directly
 # for full options (see http://www.docker.com/)
 
-CIDFILE=".containerid"
-COMMAND=$1
+name=apt-cacher-service
+tag=inaetics/$name
 
-PWD=`pwd`
-cd $(dirname $0)
-cd $PWD
-
-
-start_up () {
-    docker start apt-cacher-service >/dev/null 2>/dev/null
+start_srv() {
+    docker start $name >/dev/null 2>&1
     if [ $? -gt 0 ]; then
-      docker run --name apt-cacher-service -d -p 3142:3142 inaetics/apt-cacher-service /usr/sbin/apt-cacher > /dev/null 2>/dev/null
+      docker run --name $name -d -t -p 3142:3142 $tag  >/dev/null 2>&1
     fi
 }
 
-clean_up () {
-    docker stop apt-cacher-service > /dev/null 2>/dev/null
-    docker rm apt-cacher-service >/dev/null 2>/dev/null
+stop_srv() {
+    docker stop $name >/dev/null 2>&1
+    docker rm $name >/dev/null 2>&1
     exit
 }
 
-case "$COMMAND" in
+old_pwd=$PWD
+cd $(dirname $0)
+
+case "$1" in
   build)
-    echo "Building image inaetics/apt-cacher-service"
-    docker build -t inaetics/apt-cacher-service .
+    echo "Building $name ..."
+    docker build -t $tag .
     ;;
   run)
-    echo "Running Apt Cacher Service" 
-    start_up
-    trap clean_up SIGHUP SIGINT SIGTERM
+    echo "Running $name" 
+    start_srv
+    trap stop_srv SIGHUP SIGINT SIGTERM
     while true; do sleep 10; done
     ;;
   start)
-    echo "Starting Apt Cacher Service" 
-    start_up
+    echo "Starting $name" 
+    start_srv
     ;;
   stop)
-    echo "Stopping Apt Cacher Service" 
-    clean_up
+    echo "Stopping $name" 
+    stop_srv
     ;;
   *)
     echo "Usage: $0 {build|run|start|stop}"
@@ -51,5 +49,5 @@ case "$COMMAND" in
     ;;
 esac
 
-cd $PWD
-exit 0
+cd $old_pwd
+### EOF

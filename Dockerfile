@@ -1,13 +1,13 @@
 # Dockerfile for inaetics/apt-cacher-service
 
-FROM ubuntu:14.04
-MAINTAINER Bram de Kruijff <bdekruijff@gmail.com> (@bdekruijff)
+FROM ubuntu:14.10
+MAINTAINER Jan Willem Janssen <janwillem.janssen@luminis.eu>
 
-# Generic upgrade
-RUN DEBIAN_FRONTEND=noninteractive apt-get update -q
-RUN DEBIAN_FRONTEND=noninteractive apt-get upgrade -qy
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update -q && apt-get upgrade -qy && apt-get install -qy --no-install-recommends ca-certificates apt-cacher-ng
 
-# Tooling install
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -qy apt-cacher apache2
+EXPOSE 3142
 
-ADD apt-cacher.conf /etc/apt-cacher/apt-cacher.conf
+ADD acng.conf /etc/apt-cacher-ng/acng.conf
+CMD /etc/init.d/apt-cacher-ng start ; tail -f /var/log/apt-cacher-ng/*
+
